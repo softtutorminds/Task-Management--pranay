@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Task List</title>
+    <style>
+        /* Main page layout */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(45deg, #ff6a00, #ffcc00, #ff0066, #6600cc);
+            background-size: 400% 400%;
+            animation: gradientBackground 10s ease infinite;
+            color: #ffffff;
+            margin: 0;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        .task-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        /* Task card styles */
+        .task-card {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 255, 255, 0.4);
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .task-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 15px 30px rgba(0, 255, 255, 0.6);
+        }
+
+        .task-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .task-card p {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .task-card span {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .task-card .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-card .task-footer button,
+        .task-card .task-footer a {
+            font-size: 1.1rem;
+            color: #fff;
+            background-color: #ff00ff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .task-card .task-footer button:hover,
+        .task-card .task-footer a:hover {
+            background-color: #00ccff;
+            transform: scale(1.1);
+        }
+
+        .task-card.completed {
+            background-color: #2c2c2c;
+            opacity: 0.7;
+            text-decoration: line-through;
+        }
+
+        .task-footer button {
+            cursor: pointer;
+        }
+
+        @keyframes textGlow {
+            0% {
+                text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.7);
+            }
+            100% {
+                text-shadow: 0 0 30px rgba(0, 255, 255, 1), 0 0 40px rgba(0, 255, 255, 1);
+            }
+        }
+
+        @keyframes gradientBackground {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Task List</h1>
+    <a href="/tasks/add">Add Task</a>
+    
+    <div class="task-container">
+        <div th:each="task : ${tasks}" th:classappend="${task.completed ? 'completed' : ''}" class="task-card">
+            <h3 th:text="${task.name}">Task Name</h3>
+            <p th:text="${task.description}">Task Description</p>
+            <span th:text="'Priority: ' + ${task.priority}">Priority: High</span>
+            <span th:text="'Category: ' + ${task.category}">Category: Work</span>
+            <span th:text="'Due Date: ' + ${task.dueDate}">Due Date: 12/12/2024</span>
+
+            <div class="task-footer">
+                <form th:if="${!task.completed}" th:action="@{/tasks/complete/{id}(id=${task.id})}" method="post">
+                    <button type="submit">Complete</button>
+                </form>
+                <a class="delete" th:href="@{/tasks/delete/{id}(id=${task.id})}">Delete</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
